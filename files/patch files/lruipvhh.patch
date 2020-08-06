@@ -1,0 +1,73 @@
+--- lru_rp.hh	2019-02-02 19:57:01.406118076 -0800
++++ lruipv_rp.hh	2019-03-01 11:11:28.005021625 -0800
+@@ -34,41 +34,44 @@
+  * The victim is chosen using the last touch timestamp.
+  */
+ 
+-#ifndef __MEM_CACHE_REPLACEMENT_POLICIES_LRU_RP_HH__
+-#define __MEM_CACHE_REPLACEMENT_POLICIES_LRU_RP_HH__
++#ifndef __MEM_CACHE_REPLACEMENT_POLICIES_LRUIPV_RP_HH__
++#define __MEM_CACHE_REPLACEMENT_POLICIES_LRUIPV_RP_HH__
+ 
+ #include "mem/cache/replacement_policies/base.hh"
+ 
+-struct LRURPParams;
++struct LRUIPVRPParams;
+ 
+-class LRURP : public BaseReplacementPolicy
++class LRUIPVRP : public BaseReplacementPolicy
+ {
+   protected:
+-    /** LRU-specific implementation of replacement data. */
+-    struct LRUReplData : ReplacementData
++    /** LRUIPV-specific implementation of replacement data. */
++    struct LRUIPVReplData : ReplacementData
+     {
+         /** Tick on which the entry was last touched. */
+-        Tick lastTouchTick;
++        Tick lastTouchTick;						
++
++	/* Used to track it's current index in the vector */
++	std::shared_ptr<int> pos;
+ 
+         /**
+          * Default constructor. Invalidate data.
+          */
+-        LRUReplData() : lastTouchTick(0) {}
++        LRUIPVReplData() : lastTouchTick(0) {}
+     };
+ 
+   public:
+     /** Convenience typedef. */
+-    typedef LRURPParams Params;
++    typedef LRUIPVRPParams Params;
+ 
+     /**
+      * Construct and initiliaze this replacement policy.
+      */
+-    LRURP(const Params *p);
++    LRUIPVRP(const Params *p);
+ 
+     /**
+      * Destructor.
+      */
+-    ~LRURP() {}
++    ~LRUIPVRP() {}
+ 
+     /**
+      * Invalidate replacement data to set it as the next probable victim.
+@@ -98,7 +101,7 @@
+                                                                      override;
+ 
+     /**
+-     * Find replacement victim using LRU timestamps.
++     * Find replacement victim using LRUIPV timestamps.
+      *
+      * @param candidates Replacement candidates, selected by indexing policy.
+      * @return Replacement entry to be replaced.
+@@ -114,4 +117,4 @@
+     std::shared_ptr<ReplacementData> instantiateEntry() override;
+ };
+ 
+-#endif // __MEM_CACHE_REPLACEMENT_POLICIES_LRU_RP_HH__
++#endif // __MEM_CACHE_REPLACEMENT_POLICIES_LRUIPV_RP_HH__
